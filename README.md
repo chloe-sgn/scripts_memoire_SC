@@ -33,4 +33,3 @@ Ce dépôt est mis à disposition sous licence MIT. Vous pouvez réutiliser et a
 Référence
 Ces scripts sont associés au mémoire :
 Les risques côtiers de l’île de La Réunion : le rôle des représentations sociales dans l’étude de la vulnérabilité systémique – Université Paris 1 Panthéon-Sorbonne – 2025.
-<img width="454" height="689" alt="image" src="https://github.com/user-attachments/assets/842f68c4-6ff8-43b5-93f0-76aff12a2193" />
