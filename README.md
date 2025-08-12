@@ -14,11 +14,10 @@ Contenu du dépôt
 Le dépôt contient des scripts :
 -	De représentativité de l’échantillon : echantillon.R
 -	De distribution des indicateurs à l’échelle communale et de l’epci, en barplots pour les variables binaires et en boxplots pour les variables continues : boxplot.R
--	De regroupements de variables pour la création d’indicateurs : stats_ACM.R
+-	De regroupements de variables pour la création d’indicateurs : ACM.R
+-	De calcul de significativité de l'échelle à utiliser avec Khi2 et Kruskal-Wallis suivant les conditions : echelle.R
 -	D’analyse univariée des variables d’intérêt : univariee.R
--	D’analyses bivariées et multivariées pour tester nos hypothèses : 
-o	Khi2 pour les variables dont les conditions sont respectées : chi2.R
-o	Spearman, Mann-Whitney, régression logistique : stats_ACM.R
+-	D’analyses bivariées et multivariées pour tester nos hypothèses avec Spearman, Mann-Whitney, régression logistique : stats.R
 -	D’automatisation des calculs des indicateurs : calcul-index.R
 -	De mise en format pivot et de création de fichier shapefile : import_representation.R
 
