@@ -1,0 +1,83 @@
+# ACM confiance dans la gestion des risques
+#Importation des données
+confiance_risque<-read.csv("confiance_risque.csv",header = TRUE,sep=";", dec=".", stringsAsFactors = TRUE) %>% 
+  rename(habitant=confiance_risque_habitant, elu=confiance_risque_elu, moi=confiance_risque_moi, religion=confiance_risque_religion, scientifique=confiance_risque_scientifique, 
+         etat=confiance_risque_etat, media=confiance_risque_media, association = confiance_risque_association, municipalite=confiance_risque_municipalite)
+head(confiance_risque)
+
+confiance_risque$scientifique<-as.factor(confiance_risque$scientifique)
+confiance_risque$religion<-as.factor(confiance_risque$religion)
+confiance_risque$moi<-as.factor(confiance_risque$moi)
+confiance_risque$habitant<-as.factor(confiance_risque$habitant)
+confiance_risque$elu<-as.factor(confiance_risque$elu)
+confiance_risque$etat<-as.factor(confiance_risque$etat)
+confiance_risque$media<-as.factor(confiance_risque$media)
+confiance_risque$association<-as.factor(confiance_risque$association)
+confiance_risque$municipalite<-as.factor(confiance_risque$municipalite)
+
+#ACM
+acm <- MCA(confiance_risque[complete.cases(confiance_risque), ])
+summary(acm)
+
+#ACM pour variable supplémentaire 
+acm_moi <- MCA(confiance_risque, quali.sup = "moi")
+plot(acm_moi, invisible = c("ind", "var"), col.quali.sup = "blue")
+acm$quali.sup$coord
+acm$quali.sup$cos2
+summary(acm_moi)
+
+#Individus 
+res.mca <- MCA(confiance_risque[complete.cases(confiance_risque), ], graph = FALSE)
+plot(res.mca, invisible = c("var"))
+## ligne si variable supplémentaire 
+plot.MCA(acm, choix = "quali.sup", col.quali.sup = "blue")
+##
+plot.MCA (acm, axes = 1:2, cex = 0.7, invisible = "ind")
+
+#Contribution des variables aux axes
+fviz_contrib(acm, choice = "var", axes = 1)
+fviz_contrib(acm, choice = "var", axes = 2)
+
+#Part d'inertie expliquée par chaque axe 
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 30)) +
+  labs(title = "Variance expliquée par dimension (ACM)")
+
+#Représentation des variables
+plotellipses(acm, means = FALSE, col = brewer.pal(4, "Set1"))
+
+#Test stat (one-way ANOVA et t-test)
+dd <- dimdesc(acm, axes = 1:2)
+dd$`Dim 1`
+
+# Récupération des coordonnées des variables pour colorer les variables
+var <- get_mca_var(acm)
+
+# Extraction du nom de la variable pour chaque modalité
+df_var <- as.data.frame(var$coord)
+colnames(df_var) <- gsub(" ", "", colnames(df_var))
+df_var$modalite <- rownames(df_var)
+
+color <- data.frame(modalite = df_var$modalite)
+
+color<- color %>% 
+  mutate(mod = ifelse(modalite %in% c("moi_1", "media_1", "scientifique_1", "elu_1", "etat_1", "habitant_1", "association_1", "religion_1", "municipalite_1"), "1", 
+                      ifelse(modalite %in% c("moi_2", "media_2", "scientifique_2", "elu_2", "etat_2", "habitant_2", "association_2", "religion_2", "municipalite_2"), "2", 
+                             ifelse(modalite %in% c("moi_3", "media_3", "scientifique_3", "elu_3", "etat_3", "habitant_3", "association_3", "religion_3", "municipalite_3"), "3", 
+                                    ifelse(modalite %in% c("moi_4", "media_4", "scientifique_4", "elu_4", "etat_4", "habitant_4", "association_4", "religion_4", "municipalite_4"), "4",
+                                           ifelse(modalite %in% c("moi_5", "media_5", "scientifique_5", "elu_5", "etat_5", "habitant_5", "association_5", "religion_5", "municipalite_5"), "5",
+                                      "6"))))))
+
+df_var <- left_join(df_var, color, by = "modalite")
+df_var$mod <- as.character(df_var$mod)
+
+# Creation de la palette
+palette <- c( "1" = "#00ABFD", "2" = "#00C1AA", "3" = "#72B000", "4" = "#ED8141", "5" = "#FC717F", "6" = "#AC88FF")
+
+# Création du plot via ggplot2
+ggplot(df_var, aes(x = Dim1, y = Dim2, label = modalite, color = mod)) +
+  geom_point(size = 2) +
+  geom_text(vjust = -0.8, size = 3) +
+  scale_color_manual(values = palette) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "MCA - Modalités des variables de confiance pour la gestion du risque")
